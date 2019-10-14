@@ -28,7 +28,6 @@ using namespace cv;
 //K = P*C.transpose()*(C*p*C.transpose() + Ez).inverse();
 //se tiver lido ai, Xk += K*(lido - C*Xk);
 //P = (I(4) - K*C)*P;
-//Xk-1 = Xk;
 
 int main(){
 
