@@ -5,15 +5,78 @@
 
 using namespace cv;
 using namespace std;
+int H_MIN = 54; //5 54
+int H_MAX = 184;//19 184 
+int S_MIN = 70;//138 70
+int S_MAX = 88;//204 88
+int V_MIN = 187;//251 187
+int V_MAX = 226;//256 226
 
+void drawObject(int x, int y,Mat &frame){
+
+	//use some of the openCV drawing functions to draw crosshairs
+	//on your tracked image!
+
+    //UPDATE:JUNE 18TH, 2013
+    //added 'if' and 'else' statements to prevent
+    //memory errors from writing off the screen (ie. (-25,-25) is not within the window!)
+
+	circle(frame,Point(x,y),10,Scalar(0,255,0),2);
+
+
+}
 int main( int argc, char** argv ) {
   
   Mat image, yuvimage, cinzado;
   image = imread("d.jpg");
   cvtColor(image, yuvimage, COLOR_BGR2YUV);
-  medianBlur(yuvimage, cinzado, 15);
-  imshow("yuv", yuvimage);
-  imshow("cinzado", cinzado);
+  while(1){
+    inRange(yuvimage, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), cinzado);
+    imshow("cinzado", cinzado);
+
+    Mat temp;
+    cinzado.copyTo(temp);
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    findContours(temp, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+    double refArea = 0;
+    bool objectFound = false;
+    int numObjects = 0;
+    int x, y;
+    if(hierarchy.size() > 0){
+      numObjects = hierarchy.size();
+    }
+    if(numObjects < 50){
+      for (int index = 0; index >= 0; index = hierarchy[index][0]) {
+
+				Moments moment = moments((cv::Mat)contours[index]);
+				double area = moment.m00;
+				//if the area is less than 20 px by 20px then it is probably just noise
+				//if the area is the same as the 3/2 of the image size, probably just a bad filter
+				//we only want the object with the largest area so we safe a reference area each
+				//iteration and compare it to the area in the next iteration.
+        if(area>152 && area<1600 && area>refArea){
+					x = moment.m10/area;
+					y = moment.m01/area;
+					objectFound = true;
+					refArea = area;
+				}
+        else objectFound = false;
+
+
+			}
+			//let user know you found an object
+			if(objectFound ==true){
+				drawObject(x,y,image);
+      }
+
+		}
+    else{
+      cout << "TOO MUCH NOISE! ADJUST FILTER" << endl;
+    }
+    imshow("a",image);
+    waitKey(30);
+  }
   waitKey(0);
   return 0;
 }
