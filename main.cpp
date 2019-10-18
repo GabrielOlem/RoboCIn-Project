@@ -84,7 +84,7 @@ int main( int argc, char** argv ) {
         X = K*(lido - C*X);
 				circle(frame,Point(x,y),10,Scalar(0,255,0),2);
       }
-      circle(frame, {X(0), X(1)}, 10, Scalar(0, 0, 255), 2);
+      circle(frame, Point(X(0), X(1)), 10, Scalar(0, 0, 255), 2);
 
 		}
     else{
