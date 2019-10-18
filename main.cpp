@@ -1,10 +1,21 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
+#include <Eigen/Eigen>
 #include <iostream>
 
 using namespace cv;
+using namespace Eigen;
 using namespace std;
+
+MatrixXd X(4, 1);
+MatrixXd A(4, 4);
+MatrixXd B(4, 1);
+MatrixXd C(4, 4);
+MatrixXd Ez(2, 2);
+MatrixXd Ex(4, 4);
+MatrixXd K(4, 4);
+
 int H_MIN = 54; //5 54
 int H_MAX = 184;//19 184 
 int S_MIN = 70;//138 70
@@ -12,20 +23,20 @@ int S_MAX = 88;//204 88
 int V_MIN = 187;//251 187
 int V_MAX = 226;//256 226
 
-void drawObject(int x, int y,Mat &frame){
-
-	//use some of the openCV drawing functions to draw crosshairs
-	//on your tracked image!
-
-    //UPDATE:JUNE 18TH, 2013
-    //added 'if' and 'else' statements to prevent
-    //memory errors from writing off the screen (ie. (-25,-25) is not within the window!)
-
-	circle(frame,Point(x,y),10,Scalar(0,255,0),2);
-
-
-}
 int main( int argc, char** argv ) {
+  A << 1,0,1,0,
+       0,1,0,1,
+       0,0,1,0
+       0,0,0,1;
+  B << 1/2,1/2,1,1;
+  C << 1,0,0,0
+       0,1,0,0;
+  Ez << alpha^2, 0,
+        0, beta^2;
+  Ex << 1/4,0,1/2,0,
+        0,1/4,0,1/2,
+        1/2,0,1,0
+        0,1/2,0,1;
   
   Mat image, yuvimage, cinzado;
   image = imread("d.jpg");
@@ -43,6 +54,9 @@ int main( int argc, char** argv ) {
     bool objectFound = false;
     int numObjects = 0;
     int x, y;
+    X = A*X;
+    P = A*P*A.transpose() + Ex;
+    K = P*C.transpose()*(C*P*C.transpose() + Ez).inverse();
     if(hierarchy.size() > 0){
       numObjects = hierarchy.size();
     }
@@ -67,8 +81,10 @@ int main( int argc, char** argv ) {
 			}
 			//let user know you found an object
 			if(objectFound ==true){
-				drawObject(x,y,image);
+        X = K*(lido - C*X);
+				circle(frame,Point(x,y),10,Scalar(0,255,0),2);
       }
+      circle(frame, {X(0), X(1)}, 10, Scalar(0, 0, 255), 2);
 
 		}
     else{
