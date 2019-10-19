@@ -9,7 +9,6 @@ CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/async.hp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/base.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/bufferpool.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/check.hpp
-CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/core.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/cuda.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/cuda.inl.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/core/cuda_types.hpp
@@ -77,10 +76,8 @@ CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/flann/samplin
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/flann/saving.h
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/flann/timer.h
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/highgui.hpp
-CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/highgui/highgui.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/imgcodecs.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/imgproc.hpp
-CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/imgproc/imgproc.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/ml.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/ml/ml.inl.hpp
 CMakeFiles/main.dir/main.cpp.o: /usr/local/include/opencv4/opencv2/objdetect.hpp
