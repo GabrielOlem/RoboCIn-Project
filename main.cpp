@@ -17,13 +17,48 @@ MatrixXd Ez(2, 2);
 MatrixXd Ex(4, 4);
 MatrixXd K(4, 4);
 
-int H_MIN = 54; //5 54
-int H_MAX = 184;//19 184 
-int S_MIN = 70;//138 70
-int S_MAX = 88;//204 88
-int V_MIN = 187;//251 187
-int V_MAX = 226;//256 226
+int H_MIN = 52; //5 52
+int H_MAX = 75;//19 75 
+int S_MIN = 84;//138 84
+int S_MAX = 120;//204 120
+int V_MIN = 188;//251 188
+int V_MAX = 210;//256 210
+void on_trackbar( int, void* )
+{//This function gets called whenever a
+	// trackbar position is changed
 
+
+
+
+
+}
+void createTrackbars(){
+	//create window for trackbars
+
+
+    namedWindow("trackbarWindowName",0);
+	//create memory to store trackbar name on window
+	char TrackbarName[50];
+	sprintf( TrackbarName, "H_MIN", H_MIN);
+	sprintf( TrackbarName, "H_MAX", H_MAX);
+	sprintf( TrackbarName, "S_MIN", S_MIN);
+	sprintf( TrackbarName, "S_MAX", S_MAX);
+	sprintf( TrackbarName, "V_MIN", V_MIN);
+	sprintf( TrackbarName, "V_MAX", V_MAX);
+	//create trackbars and insert them into window
+	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
+	//the max value the trackbar can move (eg. H_HIGH), 
+	//and the function that is called whenever the trackbar is moved(eg. on_trackbar)
+	//                                  ---->    ---->     ---->      
+    createTrackbar( "H_MIN", "trackbarWindowName", &H_MIN, H_MAX, on_trackbar );
+    createTrackbar( "H_MAX", "trackbarWindowName", &H_MAX, H_MAX, on_trackbar );
+    createTrackbar( "S_MIN", "trackbarWindowName", &S_MIN, S_MAX, on_trackbar );
+    createTrackbar( "S_MAX", "trackbarWindowName", &S_MAX, S_MAX, on_trackbar );
+    createTrackbar( "V_MIN", "trackbarWindowName", &V_MIN, V_MAX, on_trackbar );
+    createTrackbar( "V_MAX", "trackbarWindowName", &V_MAX, V_MAX, on_trackbar );
+
+
+}
 int main( int argc, char** argv ) {
   A << 1,0,1,0,
        0,1,0,1,
@@ -43,15 +78,21 @@ int main( int argc, char** argv ) {
   MatrixXd P(4,4);
   lido << 0,0,0,0;
   Mat image, yuvimage, cinzado, frame;
-  VideoCapture print(0);
+  VideoCapture print("teste.avi");
   print.read(image);
   imshow("a", image);
+  Mat erodeElement = getStructuringElement(MORPH_RECT, Size(3,3));
+  Mat dilateElement = getStructuringElement(MORPH_RECT, Size(8,8));
   while(1){
-    print.read(image);
     cvtColor(image, yuvimage, COLOR_BGR2YUV);
     inRange(yuvimage, Scalar(H_MIN, S_MIN, V_MIN), Scalar(H_MAX, S_MAX, V_MAX), cinzado);
-    imshow("cinz", cinzado);
+    erode(cinzado, cinzado, erodeElement);
+    erode(cinzado, cinzado, erodeElement);
     
+    dilate(cinzado, cinzado, dilateElement);
+    dilate(cinzado, cinzado, dilateElement);
+    
+    imshow("cinz", cinzado);
     Mat temp;
     cinzado.copyTo(temp);
     vector<vector<Point> > contours;
@@ -66,16 +107,15 @@ int main( int argc, char** argv ) {
     if(hierarchy.size() > 0){
       numObjects = hierarchy.size();
     }
-    if(numObjects < 50){
+    printf("Numero de objetos %i\n", numObjects);
+    if(numObjects < 5 && numObjects > 0){
       for (int index = 0; index >= 0; index = hierarchy[index][0]) {
 
 				Moments moment = moments((cv::Mat)contours[index]);
 				double area = moment.m00;
-				//if the area is less than 20 px by 20px then it is probably just noise
-				//if the area is the same as the 3/2 of the image size, probably just a bad filter
-				//we only want the object with the largest area so we safe a reference area each
-				//iteration and compare it to the area in the next iteration.
-        if(area>152 && area<1600 && area>=refArea){
+
+        printf("Area %lf\n", area);
+        if(area>10000 && area<15000 && area>=refArea){
 					double a, b;
           a = lido(0);
           b = lido(1);
@@ -91,18 +131,19 @@ int main( int argc, char** argv ) {
 
 			}
 			//let user know you found an object
-			if(objectFound ==true){
+			if(objectFound == true){
         MatrixXd teste(2,1);
         teste(0) = lido(0);
         teste(1) = lido(1);
         X = X + K*(teste - C*X);
-				circle(image,Point(lido(0),lido(1)),10,Scalar(0,255,0),5);
+				circle(image,Point(lido(0),lido(1)),30,Scalar(0,255,0),2);
       }
-      circle(image, Point(X(0), X(1)), 10, Scalar(0, 0, 255), 2);
+      
 		}
     else{
       cout << "TOO MUCH NOISE! ADJUST FILTER" << endl;
     }
+    circle(image, Point(X(0), X(1)), 20, Scalar(0, 0, 255), 5);
     MatrixXd I(4,4);
     I << 1,0,0,0,
          0,1,0,0,
@@ -110,7 +151,9 @@ int main( int argc, char** argv ) {
          0,0,0,1;
     P = (I - K*C)*P;
     imshow("a", image);
-    waitKey(30);
+    if(waitKey(0) == 27){
+      print.read(image);
+    }
   }
   waitKey(0);
   return 0;
