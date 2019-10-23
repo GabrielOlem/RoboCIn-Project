@@ -17,12 +17,15 @@ MatrixXd Ez(2, 2);
 MatrixXd Ex(4, 4);
 MatrixXd K(4, 4);
 
-int H_MIN = 52; //5 52
-int H_MAX = 75;//19 75 
-int S_MIN = 84;//138 84
-int S_MAX = 120;//204 120
-int V_MIN = 188;//251 188
-int V_MAX = 210;//256 210
+int H_MIN = 208; //5 52
+int H_MAX = 236;//19 75 
+int S_MIN = 0;//138 84
+int S_MAX = 255;//204 120
+int V_MIN = 0;//251 188
+int V_MAX = 255;//256 210
+//bola laranja 52 to 75 84 to 120 and 188 to 210
+//bola amarela 208 to 236
+//bola vermelha 52 to 75 84 to 120 and 188 to 210
 void on_trackbar( int, void* )
 {//This function gets called whenever a
 	// trackbar position is changed
@@ -78,9 +81,10 @@ int main( int argc, char** argv ) {
   MatrixXd P(4,4);
   lido << 0,0,0,0;
   Mat image, yuvimage, cinzado, frame;
-  VideoCapture print("teste.avi");
+  VideoCapture print("untitled.webm");
   print.read(image);
   imshow("a", image);
+  //createTrackbars();
   Mat erodeElement = getStructuringElement(MORPH_RECT, Size(3,3));
   Mat dilateElement = getStructuringElement(MORPH_RECT, Size(8,8));
   while(1){
@@ -98,7 +102,6 @@ int main( int argc, char** argv ) {
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     findContours(temp, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
-    double refArea = 0;
     bool objectFound = false;
     int numObjects = 0;
     X = A*X;
@@ -115,7 +118,7 @@ int main( int argc, char** argv ) {
 				double area = moment.m00;
 
         printf("Area %lf\n", area);
-        if(area>10000 && area<15000 && area>=refArea){
+        if(area>3300 && area<4000){
 					double a, b;
           a = lido(0);
           b = lido(1);
@@ -124,7 +127,6 @@ int main( int argc, char** argv ) {
           lido(2) = lido(0) - a;
           lido(3) = lido(1) - b;
 					objectFound = true;
-					refArea = area;
 				}
         else objectFound = false;
 
