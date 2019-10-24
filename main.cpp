@@ -17,13 +17,13 @@ MatrixXd Ez(2, 2);
 MatrixXd Ex(4, 4);
 MatrixXd K(4, 4);
 
-int H_MIN = 208; //5 52
-int H_MAX = 236;//19 75 
-int S_MIN = 0;//138 84
-int S_MAX = 255;//204 120
+int H_MIN = 110; //5 52
+int H_MAX = 169;//19 75 
+int S_MIN = 31;//138 84
+int S_MAX = 87;//204 120
 int V_MIN = 0;//251 188
 int V_MAX = 255;//256 210
-//bola laranja 52 to 75 84 to 120 and 188 to 210
+//bola laranja 110 to 169  31 to 87 and 0 to 255
 //bola amarela 208 to 236
 //bola vermelha 52 to 75 84 to 120 and 188 to 210
 void on_trackbar( int, void* )
@@ -81,7 +81,8 @@ int main( int argc, char** argv ) {
   MatrixXd P(4,4);
   lido << 0,0,0,0;
   Mat image, yuvimage, cinzado, frame;
-  VideoCapture print("untitled.webm");
+  VideoCapture print("robocin.webm");
+  //createTrackbars();
   print.read(image);
   imshow("a", image);
   //createTrackbars();
@@ -118,7 +119,7 @@ int main( int argc, char** argv ) {
 				double area = moment.m00;
 
         printf("Area %lf\n", area);
-        if(area>3300 && area<4000){
+        if(area>2500 && area<4500){
 					double a, b;
           a = lido(0);
           b = lido(1);
