@@ -19,6 +19,10 @@ eigen3/Eigen/Eigen
 -
 iostream
 -
+pthread.h
+-
+bits/stdc++.h
+-
 
 /usr/local/include/opencv4/opencv2/calib3d.hpp
 opencv2/core.hpp
